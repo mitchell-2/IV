@@ -1,0 +1,123 @@
+Traceback (most recent call last):
+  File "C:\Users\31633\anaconda3\lib\site-packages\jupyter_cache\executors\utils.py", line 58, in single_nb_execution
+    executenb(
+  File "C:\Users\31633\anaconda3\lib\site-packages\nbclient\client.py", line 1204, in execute
+    return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
+  File "C:\Users\31633\anaconda3\lib\site-packages\nbclient\util.py", line 84, in wrapped
+    return just_run(coro(*args, **kwargs))
+  File "C:\Users\31633\anaconda3\lib\site-packages\nbclient\util.py", line 62, in just_run
+    return loop.run_until_complete(coro)
+  File "C:\Users\31633\anaconda3\lib\asyncio\base_events.py", line 647, in run_until_complete
+    return future.result()
+  File "C:\Users\31633\anaconda3\lib\site-packages\nbclient\client.py", line 663, in async_execute
+    await self.async_execute_cell(
+  File "C:\Users\31633\anaconda3\lib\site-packages\nbclient\client.py", line 965, in async_execute_cell
+    await self._check_raise_for_error(cell, cell_index, exec_reply)
+  File "C:\Users\31633\anaconda3\lib\site-packages\nbclient\client.py", line 862, in _check_raise_for_error
+    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
+nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
+------------------
+# verandert de dt kolom naar datatime data
+df3['dt'] = pd.to_datetime(df3['dt'])
+
+# Filtert df3 op alleen data tussen 1890-01-01 en 2013-12-31
+begin = pd.to_datetime('1890-01-01')
+einde = pd.to_datetime('2013-12-31')
+gefilterd = df3[(df3['dt'] >= begin) & (df3['dt'] <= einde)]
+
+# groepeert de data op land en berekent de gemiddelde temperatuur
+gem_temp_landen = gefilterd.groupby('Country')['AverageTemperature'].mean()
+
+# selecteert de hoogste 10 landen op basis van gemiddelde temp
+hoogste_10_landen_gemtemp = gem_temp_landen.nlargest(10)
+
+# maakt een lijst met namen die max 25 karakters lang is
+afgekorte_landen_hoogste_10 = [land[:25] for land in hoogste_10_landen_gemtemp.index]
+
+# verandert de grootte van de plot
+figuur, assen = plt.subplots(figsize=(10, 6))
+
+# maakt de bar plot aan met de afgekorte landnamen
+bar_plot = assen.bar(afgekorte_landen_hoogste_10, hoogste_10_landen_gemtemp.values)
+
+# voegt labels toe aan de plot
+assen.set_xlabel('Land')
+assen.set_ylabel('Gemiddelde temperatuur (C\N{DEGREE SIGN})')
+
+# voegt een titel toe aan de plot
+assen.set_title('Hoogste landen op basis van gemiddelde temperatuur')
+
+# geeft  tick posities aan
+assen.set_xticks(range(len(hoogste_10_landen_gemtemp.index)))
+
+# draait de x-as labels 45 graden
+assen.set_xticklabels(afgekorte_landen_hoogste_10, rotation=45, ha='right')
+
+# voegt de temperaturen van de landen toe boven aan de positieve staven en onder negatieve
+for rect in bar_plot:
+    height = rect.get_height()
+    if height >= 0:
+        assen.text(rect.get_x() + rect.get_width() / 2, height, f'{height:.2f}', ha='center', va='bottom')
+    else:
+        assen.text(rect.get_x() + rect.get_width() / 2, height, f'{height:.2f}', ha='center', va='top')
+
+tekst = "20 juni, 2023. ChatGPT (GPT3.5) gebruikt voor het maken van deze grafiek." 
+assen.text(0.5, -0.15, tekst, ha='center', va='center', transform=ax.transAxes, fontsize=10)
+        
+# laat de plot zien
+plt.tight_layout()
+plt.show()
+
+# selecteert de laagste 10 landen op basis van gemiddelde temp
+laagste_10_landen_gemtemp = gem_temp_landen.nsmallest(10)
+
+# maakt een lijst met namen die max 25 karakters lang is
+afgekorte_landen_laagste_10 = [land[:25] for land in laagste_10_landen_gemtemp.index]
+
+# verandert de grootte van de plot
+figuur, assen = plt.subplots(figsize=(10, 6))
+
+# maakt de bar plot aan met de afgekorte landnamen
+bar_plot = assen.bar(afgekorte_landen_laagste_10, laagste_10_landen_gemtemp.values)
+
+# voegt labels toe aan de plot
+assen.set_xlabel('Land')
+assen.set_ylabel('Gemiddelde temperatuur (C\N{DEGREE SIGN})')
+
+# voegt een titel toe aan de plot
+assen.set_title('Laagste landen op basis van gemiddelde temperatuur')
+
+# geeft tick posities aan
+assen.set_xticks(range(len(laagste_10_landen_gemtemp.index)))
+
+# draait de x-as labels 45 graden
+assen.set_xticklabels(afgekorte_landen_laagste_10, rotation=45, ha='right')
+
+# voegt de temperaturen van de landen toe boven aan de staven
+for rect in bar_plot:
+    height = rect.get_height()
+    if height >= 0:
+        assen.text(rect.get_x() + rect.get_width() / 2, height, f'{height:.2f}', ha='center', va='bottom')
+    else:
+        assen.text(rect.get_x() + rect.get_width() / 2, height, f'{height:.2f}', ha='center', va='top')
+
+tekst = "20 juni, 2023. ChatGPT (GPT3.5) gebruikt voor het maken van deze grafiek." 
+assen.text(0.5, -0.15, tekst, ha='center', va='center', transform=ax.transAxes, fontsize=10)
+
+# laat de plot zien
+plt.tight_layout()
+plt.show()
+------------------
+
+[1;31m---------------------------------------------------------------------------[0m
+[1;31mNameError[0m                                 Traceback (most recent call last)
+Input [1;32mIn [7][0m, in [0;36m<cell line: 46>[1;34m()[0m
+[0;32m     43[0m         assen[38;5;241m.[39mtext(rect[38;5;241m.[39mget_x() [38;5;241m+[39m rect[38;5;241m.[39mget_width() [38;5;241m/[39m [38;5;241m2[39m, height, [38;5;124mf[39m[38;5;124m'[39m[38;5;132;01m{[39;00mheight[38;5;132;01m:[39;00m[38;5;124m.2f[39m[38;5;132;01m}[39;00m[38;5;124m'[39m, ha[38;5;241m=[39m[38;5;124m'[39m[38;5;124mcenter[39m[38;5;124m'[39m, va[38;5;241m=[39m[38;5;124m'[39m[38;5;124mtop[39m[38;5;124m'[39m)
+[0;32m     45[0m tekst [38;5;241m=[39m [38;5;124m"[39m[38;5;124m20 juni, 2023. ChatGPT (GPT3.5) gebruikt voor het maken van deze grafiek.[39m[38;5;124m"[39m 
+[1;32m---> 46[0m assen[38;5;241m.[39mtext([38;5;241m0.5[39m, [38;5;241m-[39m[38;5;241m0.15[39m, tekst, ha[38;5;241m=[39m[38;5;124m'[39m[38;5;124mcenter[39m[38;5;124m'[39m, va[38;5;241m=[39m[38;5;124m'[39m[38;5;124mcenter[39m[38;5;124m'[39m, transform[38;5;241m=[39m[43max[49m[38;5;241m.[39mtransAxes, fontsize[38;5;241m=[39m[38;5;241m10[39m)
+[0;32m     48[0m [38;5;66;03m# laat de plot zien[39;00m
+[0;32m     49[0m plt[38;5;241m.[39mtight_layout()
+
+[1;31mNameError[0m: name 'ax' is not defined
+NameError: name 'ax' is not defined
+
