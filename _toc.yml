@@ -2,7 +2,7 @@
 # Learn more at https://jupyterbook.org/customize/toc.html
 
 format: jb-book
-root: docs/Inleiding
+root: docs/home
 chapters:
-- file: docs/Dataverhaal
+- file: docs/notebook
 - file: docs/Bijlagen
