@@ -1,6 +1,6 @@
 # Introductie
 
-(Laatst bijgewerkt: 27 juni 2023)<br>
+(Laatst bijgewerkt: 27 juni, 2023)<br>
 
 Door: Lucas van Gasteren, Menze de Hoop, Mitchell Malaihollo en Sem de Regt<br>
 projectgroep: D4<br>
