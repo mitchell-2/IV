@@ -156,6 +156,8 @@ const thebe_selector_output = ".output, .cell_output"
 
 <li class="toctree-l1"><a class="reference internal" href="Bijlagen.html">Bijlagen</a></li>
 
+
+
 </ul>
 
     </div>
@@ -439,6 +441,8 @@ document.write(`
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">plotly.io</span> <span class="k">as</span> <span class="nn">pio</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">ipywidgets</span> <span class="k">as</span> <span class="nn">widgets</span>
+<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">display</span>
 </pre></div>
 </div>
 </div>
@@ -474,7 +478,7 @@ document.write(`
 <p>Het eerste argument richt zich op de relatie tussen het BBP van landen en de migratiecijfers naar Canada. De bijbehorende visualisaties tonen de economische ongelijkheid tussen landen en de variatie in immigratiecijfers, hieruit blijkt dat het BBP niet de voornaamste factor is die migratiebeslissingen beïnvloedt.</p>
 <section id="rijkste-en-10-armste-landen-op-basis-van-gemiddeld-bbp">
 <h3>10 rijkste en 10 armste landen op basis van gemiddeld BBP<a class="headerlink" href="#rijkste-en-10-armste-landen-op-basis-van-gemiddeld-bbp" title="Permalink to this headline">#</a></h3>
-<p>De bar plots onder deze tekst tonen de economische kracht van landen door de top 10 rijkste en armste landen te visualiseren op basis van hun BBP (Bruto Binnenlands Product) in de periode 2010-2015. De bovenste grafiek vertegenwoordigt de top 10 rijkste landen, terwijl de onderste grafiek de top 10 armste landen weergeeft. De lengte van de bars correspondeert met het BBP van elk land. Deze visualisatie biedt een overzicht van de economische ongelijkheid tussen landen en benadrukt de grote verschillen in economische welvaart over de hele wereld.</p>
+<p>De interactieve bar plots onder deze tekst tonen de economische kracht van landen door de top 10 rijkste en armste landen te visualiseren op basis van hun BBP (Bruto Binnenlands Product) in de periode 2010-2015. De eerste grafiek vertegenwoordigt de top 10 rijkste landen, terwijl de tweede (rode) grafiek de top 10 armste landen weergeeft. De lengte van de bars correspondeert met het BBP van elk land. Deze visualisatie biedt een overzicht van het economische verschil tussen landen en benadrukt de grote verschillen in economische welvaart over de hele wereld.</p>
 <p>De belangrijkste boodschap die uit deze bar plot naar voren komt, is de economische kloof tussen de top 10 rijkste en armste landen. Het stelt de lezer in staat om de landen te identificeren die de hoogste en laagste BBP-waarden hebben en biedt inzicht in de economische ongelijkheid op wereldschaal gedurende de specifieke periode van 2010-2015. In het vervolg van het project worden deze landen gebruikt om te kijken hoeveel BBP-invloed heeft op de immigratie naar Canada.</p>
 <div class="cell tag_hide-input docutils container">
 <details class="hide above-input">
@@ -483,58 +487,43 @@ document.write(`
 <span class="expanded">Hide code cell source</span>
 </summary>
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mean_per_country</span> <span class="o">=</span> <span class="n">df2</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;Country&#39;</span><span class="p">)[</span><span class="s1">&#39;GDP&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
 
-<span class="c1"># pakt de mean gdp van alle landen in de df2 dataset</span>
-<span class="n">mean_per_country</span> <span class="o">=</span> <span class="n">df2</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;Country&#39;</span><span class="p">)[</span><span class="s1">&#39;GDP&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
-
-<span class="c1"># selecteert de top 10 van mean_per_country</span>
 <span class="n">top_10_landen</span> <span class="o">=</span> <span class="n">mean_per_country</span><span class="o">.</span><span class="n">nlargest</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
 
-<span class="c1"># selecteert de laagste 10 van mean_per_country</span>
-<span class="n">laagste_10_landen</span> <span class="o">=</span> <span class="n">mean_per_country</span><span class="o">.</span><span class="n">nsmallest</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">laagste_10_landen</span> <span class="o">=</span> <span class="n">mean_per_country</span><span class="o">.</span><span class="n">nsmallest</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-<span class="c1"># maakt een figuur met twee subplots</span>
-<span class="n">figuurtje</span><span class="p">,</span> <span class="p">(</span><span class="n">plot1</span><span class="p">,</span> <span class="n">plot2</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+<span class="k">def</span> <span class="nf">toon_plot</span><span class="p">(</span><span class="n">keuze</span><span class="p">):</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+    
+    <span class="k">if</span> <span class="n">keuze</span> <span class="o">==</span> <span class="s1">&#39;Rijkste 10 landen&#39;</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">top_10_landen</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">top_10_landen</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Rijkste 10 landen op basis van gemiddeld BBP&#39;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">keuze</span> <span class="o">==</span> <span class="s1">&#39;Armste 10 landen&#39;</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">laagste_10_landen</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">laagste_10_landen</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Armste 10 landen op basis van gemiddeld BBP&#39;</span><span class="p">)</span>
+    
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Land&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Gemiddeld BBP&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
-<span class="c1"># maakt de plot met de top_10_landen index en waarden</span>
-<span class="n">plot1</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">top_10_landen</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">top_10_landen</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+<span class="n">plot_keuze</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Dropdown</span><span class="p">(</span>
+    <span class="n">options</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Rijkste 10 landen&#39;</span><span class="p">,</span> <span class="s1">&#39;Armste 10 landen&#39;</span><span class="p">],</span>
+    <span class="n">value</span><span class="o">=</span><span class="s1">&#39;Rijkste 10 landen&#39;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Plot:&#39;</span>
+<span class="p">)</span>
 
-<span class="c1"># voegt labels toe an de plot</span>
-<span class="n">plot1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Land&#39;</span><span class="p">)</span>
-<span class="n">plot1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Gemiddeld BBP&#39;</span><span class="p">)</span>
+<span class="n">widgets</span><span class="o">.</span><span class="n">interact</span><span class="p">(</span><span class="n">toon_plot</span><span class="p">,</span> <span class="n">keuze</span><span class="o">=</span><span class="n">plot_keuze</span><span class="p">)</span>
 
-<span class="c1"># voegt titel toe aan de plot</span>
-<span class="n">plot1</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Rijkste 10 landen op basis van gemiddeld BBP&#39;</span><span class="p">)</span>
-
-<span class="c1"># draait de x-as labels 45 graden</span>
-<span class="n">plot1</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">)</span>
-
-<span class="c1"># maakt de plot met de laagste_10_landen index en waarden</span>
-<span class="n">plot2</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">laagste_10_landen</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">laagste_10_landen</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
-
-<span class="c1"># voegt labels toe aan de plot</span>
-<span class="n">plot2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Land&#39;</span><span class="p">)</span>
-<span class="n">plot2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Gemiddeld BBP&#39;</span><span class="p">)</span>
-
-<span class="c1"># voegt titel toe aan de plot</span>
-<span class="n">plot2</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Armste 10 landen op basis van gemiddeld BBP&#39;</span><span class="p">)</span>
-
-<span class="c1"># draait de x-as labels 45 graden</span>
-<span class="n">plot2</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">)</span>
-
-<span class="c1"># past de layout van de subplots aan</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-
-<span class="c1"># laat de plots zien</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">display</span><span class="p">(</span><span class="n">plot_keuze</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/1fc04cb19c15ee19adc3dfc5286bf37b3d286a93fba5306375f9b2985da911fc.png" src="../_images/1fc04cb19c15ee19adc3dfc5286bf37b3d286a93fba5306375f9b2985da911fc.png" />
-</div>
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "a2a26ab02ade400b829235272611b25e"}</script><script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "54efeb8092594b9d93ac8638147f90a1"}</script></div>
 </div>
 </section>
 <section id="totaal-aantal-immigranten-naar-canada-op-basis-van-gemiddeld-bbp">
@@ -548,18 +537,14 @@ document.write(`
 <span class="expanded">Hide code cell source</span>
 </summary>
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># selectie van hoogste en laagste 10 landen op basis van gemiddeld BBP</span>
-<span class="n">selectie_landen</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">top_10_landen</span><span class="o">.</span><span class="n">index</span><span class="p">]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">selectie_landen</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">top_10_landen</span><span class="o">.</span><span class="n">index</span><span class="p">]</span>
 <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">laagste_10_landen</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
     <span class="n">selectie_landen</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
-<span class="c1"># selecteerd de landen in de dataset die in selectie_landen zitten</span>
 <span class="n">df_landen</span> <span class="o">=</span> <span class="n">df1</span><span class="p">[</span><span class="n">df1</span><span class="p">[</span><span class="s1">&#39;Country&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">selectie_landen</span><span class="p">)]</span>
 
-<span class="c1"># sorteert de df_landen op de kolom totaal</span>
 <span class="n">df_landen</span> <span class="o">=</span> <span class="n">df_landen</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;Total&#39;</span><span class="p">)</span>
 
-<span class="c1"># maakt de traces aan voor de plot</span>
 <span class="n">trace</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Bar</span><span class="p">(</span>
     <span class="n">x</span><span class="o">=</span><span class="n">df_landen</span><span class="p">[</span><span class="s1">&#39;Country&#39;</span><span class="p">],</span>
     <span class="n">y</span><span class="o">=</span><span class="n">df_landen</span><span class="p">[</span><span class="s1">&#39;Total&#39;</span><span class="p">],</span>
@@ -568,17 +553,14 @@ document.write(`
     <span class="p">)</span>
 <span class="p">)</span>
 
-<span class="c1"># zet de titel en de as titels in de variabel opmaak</span>
 <span class="n">opmaak</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Layout</span><span class="p">(</span>
     <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Totaal aantal immigranten naar Canada op basis van gemiddeld BBP&#39;</span><span class="p">,</span>
     <span class="n">xaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Land&#39;</span><span class="p">),</span>
     <span class="n">yaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Totaal aantal immigranten&#39;</span><span class="p">),</span>
 <span class="p">)</span>
 
-<span class="c1"># maakt de plot met alle data zoals opmaak en layout</span>
 <span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="n">trace</span><span class="p">],</span> <span class="n">layout</span><span class="o">=</span><span class="n">opmaak</span><span class="p">)</span>
 
-<span class="c1"># laat do plot zien</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -605,9 +587,9 @@ document.write(`
         });
         }
         </script>
-        </div><div class="output text_html"><div>                            <div id="2fcb4ca1-b185-4e95-a3b0-07c8f9606159" class="plotly-graph-div" style="height:525px; width:100%;"></div>            <script type="text/javascript">                require(["plotly"], function(Plotly) {                    window.PLOTLYENV=window.PLOTLYENV || {};                                    if (document.getElementById("2fcb4ca1-b185-4e95-a3b0-07c8f9606159")) {                    Plotly.newPlot(                        "2fcb4ca1-b185-4e95-a3b0-07c8f9606159",                        [{"marker":{"color":["red","blue","blue","red","red","blue","red","red","blue","red","blue","red","red","red","blue","blue","blue","blue","blue","red"]},"x":["Nauru","Qatar","Luxembourg","Malawi","Niger","Kuwait","Liberia","Sierra Leone","Denmark","Guinea","Austria","Senegal","Burundi","Eritrea","Singapore","Switzerland","Ireland","Australia","Netherlands","Ethiopia"],"y":[18,157,215,294,952,2025,2759,3351,3901,4891,4985,7362,8110,10450,14579,15678,16964,23829,26884,35136],"type":"bar"}],                        {"title":{"text":"Totaal aantal immigranten naar Canada op basis van gemiddeld BBP"},"xaxis":{"title":{"text":"Land"}},"yaxis":{"title":{"text":"Totaal aantal immigranten"}},"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmapgl":[{"type":"heatmapgl","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}}},                        {"responsive": true}                    ).then(function(){
+        </div><div class="output text_html"><div>                            <div id="d1be1347-00b5-410a-bda6-f6532564405e" class="plotly-graph-div" style="height:525px; width:100%;"></div>            <script type="text/javascript">                require(["plotly"], function(Plotly) {                    window.PLOTLYENV=window.PLOTLYENV || {};                                    if (document.getElementById("d1be1347-00b5-410a-bda6-f6532564405e")) {                    Plotly.newPlot(                        "d1be1347-00b5-410a-bda6-f6532564405e",                        [{"marker":{"color":["red","blue","blue","red","red","blue","red","red","blue","red","blue","red","red","red","blue","blue","blue","blue","blue","red"]},"x":["Nauru","Qatar","Luxembourg","Malawi","Niger","Kuwait","Liberia","Sierra Leone","Denmark","Guinea","Austria","Senegal","Burundi","Eritrea","Singapore","Switzerland","Ireland","Australia","Netherlands","Ethiopia"],"y":[18,157,215,294,952,2025,2759,3351,3901,4891,4985,7362,8110,10450,14579,15678,16964,23829,26884,35136],"type":"bar"}],                        {"title":{"text":"Totaal aantal immigranten naar Canada op basis van gemiddeld BBP"},"xaxis":{"title":{"text":"Land"}},"yaxis":{"title":{"text":"Totaal aantal immigranten"}},"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmapgl":[{"type":"heatmapgl","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}}},                        {"responsive": true}                    ).then(function(){
                             
-var gd = document.getElementById('2fcb4ca1-b185-4e95-a3b0-07c8f9606159');
+var gd = document.getElementById('d1be1347-00b5-410a-bda6-f6532564405e');
 var x = new MutationObserver(function (mutations, observer) {{
         var display = window.getComputedStyle(gd).display;
         if (!display || display === 'none') {{
@@ -646,43 +628,32 @@ if (outputEl) {{
 <span class="expanded">Hide code cell source</span>
 </summary>
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># voegt datasets samen op basis van land</span>
-<span class="n">samendf</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df2</span><span class="p">,</span> <span class="n">df1</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;Country&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">samendf</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df2</span><span class="p">,</span> <span class="n">df1</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;Country&#39;</span><span class="p">)</span>
 
-<span class="c1"># verwijdert duplicaten in de samengevoegde dataset</span>
 <span class="n">samendf</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="s1">&#39;Country&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-<span class="c1"># sorteert aflopend op basis van totale immigratie</span>
 <span class="n">samendf</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;Total&#39;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-<span class="c1"># selecteert hoogste en laagste landen op basis van totale immigratie</span>
 <span class="n">hoogste_10_landen2</span> <span class="o">=</span> <span class="n">samendf</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
 <span class="n">laagste_10_landen2</span> <span class="o">=</span> <span class="n">samendf</span><span class="o">.</span><span class="n">tail</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
 
-<span class="c1"># voegt de hoogste en laagste landen samen</span>
 <span class="n">samen_extreme_landen</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">hoogste_10_landen2</span><span class="p">,</span> <span class="n">laagste_10_landen2</span><span class="p">])</span>
 
-<span class="c1"># geeft elk land een andere kleur</span>
 <span class="n">aantal_countries</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">samen_extreme_landen</span><span class="p">)</span>
 <span class="n">kleuren</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">tab20</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">aantal_countries</span><span class="p">))</span>
 
-<span class="c1"># plot de levensverwachting en totale immigratie per land</span>
 <span class="n">fig</span><span class="p">,</span> <span class="n">assen2</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">country</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">samen_extreme_landen</span><span class="o">.</span><span class="n">iterrows</span><span class="p">()):</span>
     <span class="n">assen2</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">country</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;Adult Mortality&#39;</span><span class="p">],</span> <span class="n">country</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;Total&#39;</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">kleuren</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="n">country</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;Country&#39;</span><span class="p">])</span>
 
-<span class="c1"># voegt labels toe aan de plot</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Sterfte onder volwassenen&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Totale immigratie&#39;</span><span class="p">)</span>
 
-<span class="c1"># voegt een titel toe aan de plot</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Sterfte onder volwassenen en totale immigratie&#39;</span><span class="p">)</span>
 
-<span class="c1"># maakt een legenda voor de plot buiten de plot</span>
 <span class="n">legend</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Land&#39;</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;center left&#39;</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">))</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">setp</span><span class="p">(</span><span class="n">legend</span><span class="o">.</span><span class="n">get_title</span><span class="p">(),</span> <span class="n">fontsize</span><span class="o">=</span><span class="s1">&#39;large&#39;</span><span class="p">)</span>
 
-<span class="c1"># laat de plot zien</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -698,12 +669,12 @@ if (outputEl) {{
 <section class="tex2jax_ignore mathjax_ignore" id="tweede-perspectief">
 <h1>Tweede perspectief<a class="headerlink" href="#tweede-perspectief" title="Permalink to this headline">#</a></h1>
 <p>Het tweede perspectief van dit project richt zich op de invloed van temperatuur op migratiepatronen. Door het analyseren van klimaatfactoren wordt onderzocht hoe deze van invloed kunnen zijn op de beslissingen van individuen om te migreren.</p>
-<p>Het onderzoek omvat het onderzoeken van de 10 warmste en 10 koudste landen en het analyseren van de migratie naar Canada vanuit deze landen. Door deze relatie te onderzoeken, kan inzicht worden verkregen in hoe klimaatfactoren een rol spelen bij migratiebeslissingen. Het doel is om te begrijpen of extreme temperaturen mensen motiveren om hun land van herkomst te verlaten en een nieuwe omgeving te zoeken waar ze beter kunnen gedijen.</p>
+<p>Het onderzoek omvat het onderzoeken van de 10 warmste en 10 koudste landen en het analyseren van de migratie naar Canada vanuit deze landen. Door deze relatie te onderzoeken, kan inzicht worden verkregen in hoe klimaatfactoren een rol spelen bij migratiebeslissingen. Het doel is om te begrijpen temperaturen binnen een land mensen motiveren om hun land van herkomst te verlaten en een nieuwe omgeving te zoeken waar ze beter kunnen gedijen.</p>
 <p>Het visualiseren van de data helpt bij het identificeren van patronen en trends die verband houden met temperatuur en migratie. Deze inzichten dragen bij aan een dieper begrip van de complexiteit van migratiebeslissingen en de rol die klimaatfactoren spelen bij het vormgeven van migratiepatronen wereldwijd.</p>
-<p>Het perspectief van dit project is dat er niet een correlatie is tussen de tempratuur van een land en de migratiecijfers naar Canada. Zo zal er volgens dit perspectief niet een groot verschil zijn in de migratiecijfers van de top 10 warme landen in vergelijking tot de top 10 koude landen.</p>
+<p>Het perspectief van dit project is dat er een correlatie is tussen de tempratuur van een land en de migratiecijfers naar Canada. Zo zal er volgens dit perspectief een verschil zijn in de migratiecijfers van de top 10 warme landen in vergelijking tot de top 10 koude landen.</p>
 <section id="argument-tweede-perspectief">
 <h2>Argument tweede perspectief<a class="headerlink" href="#argument-tweede-perspectief" title="Permalink to this headline">#</a></h2>
-<p>Het eerste argument binnen het tweede perspectief van dit project is dat er geen significante correlatie bestaat tussen warmte en migratiebeslissingen. Uit de datasets en de visualisaties blijkt dat er niet een relatie is tussen deze twee variabelen. Zo zijn sommige migratiecijfers van warme landen naar Canada erg hoog, maar dit is niet veel anders voor de migratiecijfers van sommige koude landen. Ook geld dit voor landen met lage migratiecijfers naar Canada, zowel ‘koude’ als ‘warme’ landen hebben lage migratiecijfers naar Canada.</p>
+<p>Het eerste argument binnen het tweede perspectief van dit project is dat er een correlatie bestaat tussen warmte en migratiebeslissingen. Uit de datasets en de visualisaties blijkt dat er een relatie is tussen deze twee variabelen. Zo zijn de migratiecijfers van warme landen naar Canada relatief hoog in vergelijking tot de migratiecijfers van de koude landen. Zo blijkt uit de visualisatie dat hoe hoger de tempratuur is hoe meer immigranten er naar Canada gaan.</p>
 <section id="warmste-en-10-koudste-landen">
 <h3>10 Warmste en 10 koudste landen<a class="headerlink" href="#warmste-en-10-koudste-landen" title="Permalink to this headline">#</a></h3>
 <p>Voor het tweede perspectief wilden we onderzoeken of er een relatie was tussen de temperatuur van een land en de immigranten die naar Canada zijn gegaan. Voor de temperaturen van de landen hebben we een dataset gebruikt die van alle landen vanaf 1750 tot 2020 alle temperaturen bevat. We hebben de gemiddelde temperatuur berekent van elk land tussen 1890 en 2013 en daarvan de tien warmste landen en tien koudste landen in twee grafieken gezet. Met de gemiddelde tempratuur op de Y-as en de landen op de X-as. Dit zijn de eerste twee grafieken.</p>
@@ -714,102 +685,84 @@ if (outputEl) {{
 <span class="expanded">Hide code cell source</span>
 </summary>
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># verandert de dt kolom naar datatime data</span>
-<span class="n">df3</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df3</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df3</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df3</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">])</span>
 
-<span class="c1"># Filtert df3 op alleen data tussen 1890-01-01 en 2013-12-31</span>
 <span class="n">begin</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="s1">&#39;1890-01-01&#39;</span><span class="p">)</span>
 <span class="n">einde</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="s1">&#39;2013-12-31&#39;</span><span class="p">)</span>
 <span class="n">gefilterd</span> <span class="o">=</span> <span class="n">df3</span><span class="p">[(</span><span class="n">df3</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">begin</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df3</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">einde</span><span class="p">)]</span>
 
-<span class="c1"># groepeert de data op land en berekent de gemiddelde temperatuur</span>
 <span class="n">gem_temp_landen</span> <span class="o">=</span> <span class="n">gefilterd</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;Country&#39;</span><span class="p">)[</span><span class="s1">&#39;AverageTemperature&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
 
-<span class="c1"># selecteert de hoogste 10 landen op basis van gemiddelde temp</span>
-<span class="n">hoogste_10_landen_gemtemp</span> <span class="o">=</span> <span class="n">gem_temp_landen</span><span class="o">.</span><span class="n">nlargest</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">toon_plot</span><span class="p">(</span><span class="n">keuze</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">keuze</span> <span class="o">==</span> <span class="s1">&#39;Hoogste 10 landen&#39;</span><span class="p">:</span>
+        <span class="n">hoogste_10_landen_gemtemp</span> <span class="o">=</span> <span class="n">gem_temp_landen</span><span class="o">.</span><span class="n">nlargest</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
 
-<span class="c1"># verandert de grootte van de plot</span>
-<span class="n">figuur</span><span class="p">,</span> <span class="n">assen</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+        <span class="n">figuur</span><span class="p">,</span> <span class="n">assen</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
 
-<span class="c1"># maakt de bar plot aan met de data van hoogste_10_landen_gemtemp</span>
-<span class="n">bar_plot</span> <span class="o">=</span> <span class="n">assen</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">hoogste_10_landen_gemtemp</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">hoogste_10_landen_gemtemp</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+        <span class="n">bar_plot</span> <span class="o">=</span> <span class="n">assen</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">hoogste_10_landen_gemtemp</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">hoogste_10_landen_gemtemp</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;yellow&#39;</span><span class="p">)</span>
 
-<span class="c1"># voegt labels toe aan de plot</span>
-<span class="n">assen</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Land&#39;</span><span class="p">)</span>
-<span class="n">assen</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Gemiddelde temperatuur (C</span><span class="se">\N{DEGREE SIGN}</span><span class="s1">)&#39;</span><span class="p">)</span>
+        <span class="n">assen</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Land&#39;</span><span class="p">)</span>
+        <span class="n">assen</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Gemiddelde temperatuur (°C)&#39;</span><span class="p">)</span>
+        <span class="n">assen</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Hoogste landen op basis van gemiddelde temperatuur&#39;</span><span class="p">)</span>
 
-<span class="c1"># voegt een titel toe aan de plot</span>
-<span class="n">assen</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Hoogste landen op basis van gemiddelde temperatuur&#39;</span><span class="p">)</span>
+        <span class="n">assen</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">hoogste_10_landen_gemtemp</span><span class="o">.</span><span class="n">index</span><span class="p">)))</span>
 
-<span class="c1"># Geeft de tick posities aan (anders kregen we een error)</span>
-<span class="n">assen</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">hoogste_10_landen_gemtemp</span><span class="o">.</span><span class="n">index</span><span class="p">)))</span>
+        <span class="n">assen</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">hoogste_10_landen_gemtemp</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">)</span>
 
-<span class="c1"># draait de x-as labels 45 graden</span>
-<span class="n">assen</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">hoogste_10_landen_gemtemp</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">rect</span> <span class="ow">in</span> <span class="n">bar_plot</span><span class="p">:</span>
+            <span class="n">height</span> <span class="o">=</span> <span class="n">rect</span><span class="o">.</span><span class="n">get_height</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">height</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">assen</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">rect</span><span class="o">.</span><span class="n">get_x</span><span class="p">()</span> <span class="o">+</span> <span class="n">rect</span><span class="o">.</span><span class="n">get_width</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">height</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s1">&#39;bottom&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">assen</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">rect</span><span class="o">.</span><span class="n">get_x</span><span class="p">()</span> <span class="o">+</span> <span class="n">rect</span><span class="o">.</span><span class="n">get_width</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">height</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s1">&#39;top&#39;</span><span class="p">)</span>
 
-<span class="c1"># voegt de temperaturen van de landen toe boven aan de positieve staven en onder negatieve</span>
-<span class="k">for</span> <span class="n">rect</span> <span class="ow">in</span> <span class="n">bar_plot</span><span class="p">:</span>
-    <span class="n">height</span> <span class="o">=</span> <span class="n">rect</span><span class="o">.</span><span class="n">get_height</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">height</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">assen</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">rect</span><span class="o">.</span><span class="n">get_x</span><span class="p">()</span> <span class="o">+</span> <span class="n">rect</span><span class="o">.</span><span class="n">get_width</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">height</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s1">&#39;bottom&#39;</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">assen</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">rect</span><span class="o">.</span><span class="n">get_x</span><span class="p">()</span> <span class="o">+</span> <span class="n">rect</span><span class="o">.</span><span class="n">get_width</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">height</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s1">&#39;top&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">keuze</span> <span class="o">==</span> <span class="s1">&#39;Laagste 10 landen&#39;</span><span class="p">:</span>
+        <span class="n">laagste_10_landen_gemtemp</span> <span class="o">=</span> <span class="n">gem_temp_landen</span><span class="o">.</span><span class="n">nsmallest</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
 
-<span class="c1"># laat de plot zien</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="n">figuur</span><span class="p">,</span> <span class="n">assen</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
 
-<span class="c1"># selecteert de laagste 10 landen op basis van gemiddelde temp</span>
-<span class="n">laagste_10_landen_gemtemp</span> <span class="o">=</span> <span class="n">gem_temp_landen</span><span class="o">.</span><span class="n">nsmallest</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+        <span class="n">bar_plot</span> <span class="o">=</span> <span class="n">assen</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">laagste_10_landen_gemtemp</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">laagste_10_landen_gemtemp</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
 
-<span class="c1"># verandert de grootte van de plot</span>
-<span class="n">figuur</span><span class="p">,</span> <span class="n">assen</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+        <span class="n">assen</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Land&#39;</span><span class="p">)</span>
+        <span class="n">assen</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Gemiddelde temperatuur (°C)&#39;</span><span class="p">)</span>
+        <span class="n">assen</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Laagste landen op basis van gemiddelde temperatuur&#39;</span><span class="p">)</span>
 
-<span class="c1"># maakt de bar plot aan met de data van laagste_10_landen_gemtemp</span>
-<span class="n">bar_plot</span> <span class="o">=</span> <span class="n">assen</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">laagste_10_landen_gemtemp</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">laagste_10_landen_gemtemp</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+        <span class="n">assen</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">laagste_10_landen_gemtemp</span><span class="o">.</span><span class="n">index</span><span class="p">)))</span>
 
-<span class="c1"># voegt labels toe aan de plot</span>
-<span class="n">assen</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Land&#39;</span><span class="p">)</span>
-<span class="n">assen</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Gemiddelde temperatuur (C</span><span class="se">\N{DEGREE SIGN}</span><span class="s1">)&#39;</span><span class="p">)</span>
+        <span class="n">assen</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">laagste_10_landen_gemtemp</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">)</span>
 
-<span class="c1"># voegt een titel toe aan de plot</span>
-<span class="n">assen</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Laagste landen op basis van gemiddelde temperatuur&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">rect</span> <span class="ow">in</span> <span class="n">bar_plot</span><span class="p">:</span>
+            <span class="n">height</span> <span class="o">=</span> <span class="n">rect</span><span class="o">.</span><span class="n">get_height</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">height</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">assen</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">rect</span><span class="o">.</span><span class="n">get_x</span><span class="p">()</span> <span class="o">+</span> <span class="n">rect</span><span class="o">.</span><span class="n">get_width</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">height</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s1">&#39;bottom&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">assen</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">rect</span><span class="o">.</span><span class="n">get_x</span><span class="p">()</span> <span class="o">+</span> <span class="n">rect</span><span class="o">.</span><span class="n">get_width</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">height</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s1">&#39;top&#39;</span><span class="p">)</span>
 
-<span class="c1"># Geeft de tick posities aan (anders kregen we een error)</span>
-<span class="n">assen</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">laagste_10_landen_gemtemp</span><span class="o">.</span><span class="n">index</span><span class="p">)))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
-<span class="c1"># draait de x-as labels 45 graden</span>
-<span class="n">assen</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">laagste_10_landen_gemtemp</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">)</span>
+<span class="n">plot_keuze</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Dropdown</span><span class="p">(</span>
+    <span class="n">options</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Hoogste 10 landen&#39;</span><span class="p">,</span> <span class="s1">&#39;Laagste 10 landen&#39;</span><span class="p">],</span>
+    <span class="n">value</span><span class="o">=</span><span class="s1">&#39;Hoogste 10 landen&#39;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Plot:&#39;</span>
+<span class="p">)</span>
 
-<span class="c1"># voegt de temperaturen van de landen toe boven aan de staven</span>
-<span class="k">for</span> <span class="n">rect</span> <span class="ow">in</span> <span class="n">bar_plot</span><span class="p">:</span>
-    <span class="n">height</span> <span class="o">=</span> <span class="n">rect</span><span class="o">.</span><span class="n">get_height</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">height</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">assen</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">rect</span><span class="o">.</span><span class="n">get_x</span><span class="p">()</span> <span class="o">+</span> <span class="n">rect</span><span class="o">.</span><span class="n">get_width</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">height</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s1">&#39;bottom&#39;</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">assen</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">rect</span><span class="o">.</span><span class="n">get_x</span><span class="p">()</span> <span class="o">+</span> <span class="n">rect</span><span class="o">.</span><span class="n">get_width</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">height</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s1">&#39;top&#39;</span><span class="p">)</span>
+<span class="n">widgets</span><span class="o">.</span><span class="n">interact</span><span class="p">(</span><span class="n">toon_plot</span><span class="p">,</span> <span class="n">keuze</span><span class="o">=</span><span class="n">plot_keuze</span><span class="p">)</span>
 
-<span class="c1"># laat de plot zien</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Voor het maken van deze twee grafieken is op 20 juni 2023 gebruik gemaakt van ChatGPT (versie GPT3.5). Gebruikte prompts waren &quot;op het moment staan de getallen die negatief zijn in de staven van de grafiek terwijl de temperatuur getallen juist onder aan de staven moet staan.&quot; en &quot;in deze grafiek zijn er 3 staven die wel een positieve temperatuur hebben dus hier moet de temperatuur juist boven de staaf staan.&quot;&#39;</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">plot_keuze</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/903ab5db09ad47a07b28a86463e6ef4942f96ea47d5b3c60cc5d2298f6b532a8.png" src="../_images/903ab5db09ad47a07b28a86463e6ef4942f96ea47d5b3c60cc5d2298f6b532a8.png" />
-<img alt="../_images/0278aa0cf649addfe89d6cbc08be824f6f361221beeca37c8577963aaf4733b9.png" src="../_images/0278aa0cf649addfe89d6cbc08be824f6f361221beeca37c8577963aaf4733b9.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Voor het maken van deze twee grafieken is op 20 juni 2023 gebruik gemaakt van ChatGPT (versie GPT3.5). Gebruikte prompts waren &quot;op het moment staan de getallen die negatief zijn in de staven van de grafiek terwijl de temperatuur getallen juist onder aan de staven moet staan.&quot; en &quot;in deze grafiek zijn er 3 staven die wel een positieve temperatuur hebben dus hier moet de temperatuur juist boven de staaf staan.&quot;
-</pre></div>
-</div>
-</div>
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "99e95dd5953e4b67b454c3a198a0ed86"}</script><script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "80172092b0a1420797815c2c4dd2be4a"}</script></div>
 </div>
 </section>
 <section id="totaal-aantal-immigranten-naar-canada-op-basis-van-gemiddelde-temperatuur">
 <h3>Totaal aantal immigranten naar Canada op basis van gemiddelde temperatuur<a class="headerlink" href="#totaal-aantal-immigranten-naar-canada-op-basis-van-gemiddelde-temperatuur" title="Permalink to this headline">#</a></h3>
-<p>Onder deze tekst hebben we een grafiek gemaakt van het totaal aantal immigranten die naar Canada zijn gegaan van de tien warmste landen en tien koudste landen. Op de Y-as staan de totaal aantal immigranten naar Canada en op de X-as de landen waarvan de immigranten afkomstig zijn. Hier kan je zien dat van de top tien warmste landen de meeste immigranten uit Senegal kwamen en van de tien koudste landen de meeste immigranten uit Denemarken kwamen.</p>
+<p>Vervolgens hebben we een lijngrafiek gemaakt van het totaal aantal immigranten die naar Canada zijn gegaan van de tien warmste landen en tien koudste landen. Op de Y-as staan de totaal aantal immigranten naar Canada en op de X-as de landen waarvan de immigranten afkomstig zijn. Hier kan je zien dat van de top tien warmste landen de meeste immigranten uit Senegal kwamen en van de tien koudste landen de meeste immigranten uit Denemarken kwamen.</p>
 <div class="cell tag_hide-input docutils container">
 <details class="hide above-input">
 <summary aria-label="Toggle hidden content">
@@ -817,127 +770,84 @@ if (outputEl) {{
 <span class="expanded">Hide code cell source</span>
 </summary>
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># selectie van hoogste en laagste 10 landen op basis van gemiddelde temperatuur</span>
-<span class="n">landen_selectie</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">hoogste_10_landen_gemtemp</span><span class="o">.</span><span class="n">index</span><span class="p">]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">landen_selectie</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">hoogste_10_landen_gemtemp</span><span class="o">.</span><span class="n">index</span><span class="p">]</span>
 <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">laagste_10_landen_gemtemp</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
     <span class="n">landen_selectie</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
-<span class="c1"># selecteerd de landen in de dataset die in landen_selectie zitten</span>
 <span class="n">landen_gesorteerd</span> <span class="o">=</span> <span class="n">df1</span><span class="p">[</span><span class="n">df1</span><span class="p">[</span><span class="s1">&#39;Country&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">landen_selectie</span><span class="p">)]</span>
 
-<span class="c1"># sorteert de landen in de dataset op basis van het totaal aantal immigranten naar canada</span>
 <span class="n">landen_gesorteerd</span> <span class="o">=</span> <span class="n">landen_gesorteerd</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;Total&#39;</span><span class="p">)</span>
 
-<span class="c1"># maakt de traces aan voor de plot</span>
-<span class="n">trace</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Bar</span><span class="p">(</span>
-    <span class="n">x</span><span class="o">=</span><span class="n">landen_gesorteerd</span><span class="p">[</span><span class="s1">&#39;Country&#39;</span><span class="p">],</span>
-    <span class="n">y</span><span class="o">=</span><span class="n">landen_gesorteerd</span><span class="p">[</span><span class="s1">&#39;Total&#39;</span><span class="p">],</span>
-<span class="p">)</span>
-
-<span class="c1"># zet de titel en de as titels in de variabel opmaak2</span>
-<span class="n">opmaak2</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Layout</span><span class="p">(</span>
-    <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Totaal aantal immigranten naar Canada op basis van gemiddelde temperatuur&#39;</span><span class="p">,</span>
-    <span class="n">xaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Land&#39;</span><span class="p">),</span>
-    <span class="n">yaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Totaal&#39;</span><span class="p">),</span>
-<span class="p">)</span>
-
-<span class="c1"># maakt de plot met alle data zoals opmaak en layout</span>
-<span class="n">figuur2</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="n">trace</span><span class="p">],</span> <span class="n">layout</span><span class="o">=</span><span class="n">opmaak2</span><span class="p">)</span>
-
-<span class="c1"># laat de plot zien</span>
-<span class="n">figuur2</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-</details>
-<div class="cell_output docutils container">
-<div class="output text_html"><div>                            <div id="9a36ea3d-efd8-4b87-a9aa-b25a4a50da88" class="plotly-graph-div" style="height:525px; width:100%;"></div>            <script type="text/javascript">                require(["plotly"], function(Plotly) {                    window.PLOTLYENV=window.PLOTLYENV || {};                                    if (document.getElementById("9a36ea3d-efd8-4b87-a9aa-b25a4a50da88")) {                    Plotly.newPlot(                        "9a36ea3d-efd8-4b87-a9aa-b25a4a50da88",                        [{"x":["Canada","Iceland","Gambia","United Arab Emirates","Mongolia","Niger","Mauritania","Djibouti","Burkina Faso","Mali","Norway","Finland","Denmark","Senegal"],"y":[20,570,603,836,952,952,1016,1646,2043,2188,2327,2781,3901,7362],"type":"bar"}],                        {"title":{"text":"Totaal aantal immigranten naar Canada op basis van gemiddelde temperatuur"},"xaxis":{"title":{"text":"Land"}},"yaxis":{"title":{"text":"Totaal"}},"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmapgl":[{"type":"heatmapgl","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}}},                        {"responsive": true}                    ).then(function(){
-                            
-var gd = document.getElementById('9a36ea3d-efd8-4b87-a9aa-b25a4a50da88');
-var x = new MutationObserver(function (mutations, observer) {{
-        var display = window.getComputedStyle(gd).display;
-        if (!display || display === 'none') {{
-            console.log([gd, 'removed!']);
-            Plotly.purge(gd);
-            observer.disconnect();
-        }}
-}});
-
-// Listen for the removal of the full notebook cells
-var notebookContainer = gd.closest('#notebook-container');
-if (notebookContainer) {{
-    x.observe(notebookContainer, {childList: true});
-}}
-
-// Listen for the clearing of the current output cell
-var outputEl = gd.closest('.output');
-if (outputEl) {{
-    x.observe(outputEl, {childList: true});
-}}
-
-                        })                };                });            </script>        </div></div></div>
-</div>
-</section>
-<section id="gemiddelde-temperatuur-en-totaal-aantal-immigranten-naar-canada">
-<h3>Gemiddelde temperatuur en totaal aantal immigranten naar Canada<a class="headerlink" href="#gemiddelde-temperatuur-en-totaal-aantal-immigranten-naar-canada" title="Permalink to this headline">#</a></h3>
-<p>Hierna hebben we een plot gemaakt met al die twintig landen met op de x-as de gemiddelde temperatuur van de landen en op de y-as het aantal immigranten naar Canada. In deze grafiek kan je goed zien dat het aantal immigranten naar Canada goed is verdeeld over de verschillende temperaturen. Daarom zijn wij tot de conclusie gekomen dat temperatuur niet veel invloed heeft op de immigranten stroom naar Canada. Als we niet de tien warmste en koudste landen hadden genomen en een andere aanpak hadden genomen, waren we misschien op een andere conclusie gekomen.</p>
-<div class="cell tag_hide-input docutils container">
-<details class="hide above-input">
-<summary aria-label="Toggle hidden content">
-<span class="collapsed">Show code cell source</span>
-<span class="expanded">Hide code cell source</span>
-</summary>
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># verandert de dt kolom naar datatime data</span>
-<span class="n">df3</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df3</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">])</span>
-
-<span class="c1"># Filtert df3 op alleen data tussen 1890-01-01 en 2013-12-31</span>
-<span class="n">gefilterde_data</span> <span class="o">=</span> <span class="n">df3</span><span class="p">[(</span><span class="n">df3</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">begin</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df3</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">einde</span><span class="p">)]</span>
-
-<span class="c1"># groepeert de data op land en berekent de gemiddelde temperatuur</span>
-<span class="n">gemp_temp_per_land</span> <span class="o">=</span> <span class="n">gefilterde_data</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;Country&#39;</span><span class="p">)[</span><span class="s1">&#39;AverageTemperature&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
-
-<span class="c1"># voegt gem temperatuur en totale immigratie datasets samen op basis van land</span>
-<span class="n">samengevoegd_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">gemp_temp_per_land</span><span class="p">,</span> <span class="n">df1</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;Country&#39;</span><span class="p">)</span>
-
-<span class="c1"># sorteert aflopend de data op basis van gemmidelde temperatuur</span>
-<span class="n">samengevoegd_data</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;AverageTemperature&#39;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-<span class="c1"># maakt selectie van top 10 warmste en koudste landen</span>
-<span class="n">top_10_warmste_landen</span> <span class="o">=</span> <span class="n">samengevoegd_data</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
-<span class="n">top_10_koudste_landen</span> <span class="o">=</span> <span class="n">samengevoegd_data</span><span class="o">.</span><span class="n">tail</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
-
-<span class="c1"># voegt de top warmste en laagste koudste samen</span>
-<span class="n">selectie_landen</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">top_10_warmste_landen</span><span class="p">,</span> <span class="n">top_10_koudste_landen</span><span class="p">])</span>
-
-<span class="c1"># geeft elk land een andere kleur</span>
-<span class="n">aantal_landen</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">selectie_landen</span><span class="p">)</span>
-<span class="n">kleuren</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">tab20</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">aantal_landen</span><span class="p">))</span>
-
-<span class="c1"># plot de gem temp en totale immigratie per land</span>
-<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
-<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">country</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">selectie_landen</span><span class="o">.</span><span class="n">iterrows</span><span class="p">()):</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">country</span><span class="p">[</span><span class="s1">&#39;AverageTemperature&#39;</span><span class="p">],</span> <span class="n">country</span><span class="p">[</span><span class="s1">&#39;Total&#39;</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="p">[</span><span class="n">kleuren</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span> <span class="n">label</span><span class="o">=</span><span class="n">country</span><span class="p">[</span><span class="s1">&#39;Country&#39;</span><span class="p">])</span>
-
-<span class="c1"># voegt labels toe aan de plot</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Gemiddelde temperatuur&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">landen_gesorteerd</span><span class="p">[</span><span class="s1">&#39;Country&#39;</span><span class="p">],</span> <span class="n">landen_gesorteerd</span><span class="p">[</span><span class="s1">&#39;Total&#39;</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Land&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Totaal aantal immigranten&#39;</span><span class="p">)</span>
-
-<span class="c1"># voegt totel toe aan de plot</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Gemiddelde temperatuur en totaal aantal immigranten naar canada&#39;</span><span class="p">)</span>
-
-<span class="c1"># maakt een legenda voor de plot buiten de plot</span>
-<span class="n">legend</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Land&#39;</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;center left&#39;</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">))</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">setp</span><span class="p">(</span><span class="n">legend</span><span class="o">.</span><span class="n">get_title</span><span class="p">(),</span> <span class="n">fontsize</span><span class="o">=</span><span class="s1">&#39;large&#39;</span><span class="p">)</span>
-
-<span class="c1"># laat de plot zien</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Totaal aantal immigranten naar Canada op basis van gemiddelde temperatuur&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/2610528ee2072223948593b498cdf415a38d39c50d3fc1c8162eb6655528f39d.png" src="../_images/2610528ee2072223948593b498cdf415a38d39c50d3fc1c8162eb6655528f39d.png" />
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="nn">Input In [7],</span> in <span class="ni">&lt;cell line: 1&gt;</span><span class="nt">()</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">landen_selectie</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">hoogste_10_landen_gemtemp</span><span class="o">.</span><span class="n">index</span><span class="p">]</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">laagste_10_landen_gemtemp</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span>     <span class="n">landen_selectie</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<span class="ne">NameError</span>: name &#39;hoogste_10_landen_gemtemp&#39; is not defined
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="gemiddelde-temperatuur-en-totaal-aantal-immigranten-naar-canada">
+<h3>Gemiddelde temperatuur en totaal aantal immigranten naar Canada<a class="headerlink" href="#gemiddelde-temperatuur-en-totaal-aantal-immigranten-naar-canada" title="Permalink to this headline">#</a></h3>
+<p>Hierna hebben we een plot gemaakt met al die twintig landen met op de x-as de gemiddelde temperatuur van de landen en op de y-as het aantal immigranten naar Canada. In deze grafiek kan je goed zien dat het aantal immigranten naar Canada goed is verdeeld over de verschillende temperaturen. Daarom zijn wij tot de conclusie gekomen dat temperatuur invloed heeft op de immigranten stroom naar Canada. Zo zijn er een aantal landen uitgekozen die in een plot zijn gezet. Hieruit bleek dat hoe hoger de temperatuur werd hoe hoger de migratiestroom naar Canada was.</p>
+<div class="cell tag_hide-input docutils container">
+<details class="hide above-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell source</span>
+<span class="expanded">Hide code cell source</span>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df3</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df3</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">])</span>
+
+<span class="n">filtered_data</span> <span class="o">=</span> <span class="n">df3</span><span class="p">[(</span><span class="n">df3</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">begin</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df3</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">einde</span><span class="p">)]</span>
+
+<span class="n">avg_temp_per_country</span> <span class="o">=</span> <span class="n">filtered_data</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;Country&#39;</span><span class="p">)[</span><span class="s1">&#39;AverageTemperature&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+
+<span class="n">merged_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">avg_temp_per_country</span><span class="p">,</span> <span class="n">df1</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;Country&#39;</span><span class="p">)</span>
+
+<span class="n">merged_data</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;AverageTemperature&#39;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">top_10_warmest_countries</span> <span class="o">=</span> <span class="n">merged_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">merged_data</span><span class="p">[</span><span class="s1">&#39;Country&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="s1">&#39;Lebanon&#39;</span><span class="p">,</span> <span class="s1">&#39;Norway&#39;</span><span class="p">,</span> <span class="s1">&#39;Denmark&#39;</span><span class="p">,</span> <span class="s1">&#39;Iceland&#39;</span><span class="p">,</span> <span class="s1">&#39;San Marino&#39;</span><span class="p">,</span> <span class="s1">&#39;Monaco&#39;</span><span class="p">,</span> <span class="s1">&#39;Liechtenstein&#39;</span><span class="p">,</span> <span class="s1">&#39;Andorra&#39;</span><span class="p">,</span> <span class="s1">&#39;Philippines&#39;</span><span class="p">,</span> <span class="s1">&#39;India&#39;</span><span class="p">,</span> <span class="s1">&#39;Iran&#39;</span><span class="p">,</span> <span class="s1">&#39;South Korea&#39;</span><span class="p">,</span> <span class="s1">&#39;Colombia&#39;</span><span class="p">,</span> <span class="s1">&#39;Haiti&#39;</span><span class="p">,</span> <span class="s1">&#39;Jamaica&#39;</span><span class="p">])]</span>
+
+<span class="n">num_countries</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">top_10_warmest_countries</span><span class="p">)</span>
+<span class="n">colors</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">tab20</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">num_countries</span><span class="p">))</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">country</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">top_10_warmest_countries</span><span class="o">.</span><span class="n">iterrows</span><span class="p">()):</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">country</span><span class="p">[</span><span class="s1">&#39;AverageTemperature&#39;</span><span class="p">],</span> <span class="n">country</span><span class="p">[</span><span class="s1">&#39;Total&#39;</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="p">[</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span> <span class="n">label</span><span class="o">=</span><span class="n">country</span><span class="p">[</span><span class="s1">&#39;Country&#39;</span><span class="p">])</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Average Temperature&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Total Number of Immigrants&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Average Temperature and Total Number of Immigrants to Canada&#39;</span><span class="p">)</span>
+
+<span class="n">legend</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Country&#39;</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;center left&#39;</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">setp</span><span class="p">(</span><span class="n">legend</span><span class="o">.</span><span class="n">get_title</span><span class="p">(),</span> <span class="n">fontsize</span><span class="o">=</span><span class="s1">&#39;large&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</details>
+<div class="cell_output docutils container">
+<img alt="../_images/656c5a1006364aa8cb1e764f82b58a0266dddc39c28a6cba52197c4af4e4385c.png" src="../_images/656c5a1006364aa8cb1e764f82b58a0266dddc39c28a6cba52197c4af4e4385c.png" />
 </div>
 </div>
 </section>
